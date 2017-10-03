@@ -1,0 +1,74 @@
+#loader {
+    width: 30px;
+    height: 25px;
+    margin: 30px auto;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-flow: row no-wrap;
+    -ms-flex-flow: row no-wrap;
+    flex-flow: row no-wrap;
+    -webkit-box-pack: left;
+    -webkit-justify-content: left;
+    -ms-flex-pack: left;
+    justify-content: left;
+    text-align: left;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center
+}
+
+#loader.loaded .bar {
+    width: 5px;
+    height: 5px;
+    margin-right: 1px;
+    border-radius: 5px;
+    background: #0077C5;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 5px;
+    -ms-flex: 1 5px;
+    flex: 1 5px
+}
+
+#loader.loaded .bar:last-child {
+    margin: 0
+}
+
+#loader.loaded .bar:nth-child(1) {
+    -webkit-animation: load .3s ease-in-out .1s infinite alternate;
+    animation: load .3s ease-in-out .1s infinite alternate
+}
+
+#loader.loaded .bar:nth-child(2) {
+    -webkit-animation: load .3s ease-in-out .2s infinite alternate;
+    animation: load .3s ease-in-out .2s infinite alternate
+}
+
+#loader.loaded .bar:nth-child(3) {
+    -webkit-animation: load .3s ease-in-out .3s infinite alternate;
+    animation: load .3s ease-in-out .3s infinite alternate
+}
+
+#loader.loaded .bar:nth-child(4) {
+    -webkit-animation: load .3s ease-in-out .4s infinite alternate;
+    animation: load .3s ease-in-out .4s infinite alternate
+}
+
+#loader.loaded .bar:nth-child(5) {
+    -webkit-animation: load .3s ease-in-out .5s infinite alternate;
+    animation: load .3s ease-in-out .5s infinite alternate
+}
+
+@-webkit-keyframes load {
+    100% {
+        height: 25px
+    }
+}
+
+@keyframes load {
+    100% {
+        height: 25px
+    }
+}
