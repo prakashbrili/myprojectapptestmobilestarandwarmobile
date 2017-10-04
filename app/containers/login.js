@@ -10,6 +10,7 @@ import {
     Dimensions,
     TouchableOpacity,
     ActivityIndicator,
+    Keyboard
 } from 'react-native';
 
 import {globalStyle, globalColor, globalFontType}from "../utils/globalStyles"
@@ -28,10 +29,14 @@ const visibleIcon = <MaterialIcon name="visibility" size={20} color={globalColor
 
 // let url = urlConfig.carrierServiceUrl.LITERATURE_SERVICE ;
 
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { ActionCreators } from '../redux/action'
+import * as types from '../redux/action/types'
 
 class LoginScreen extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             visibleIcon: false,
             isErrorInput: false,
@@ -39,7 +44,27 @@ class LoginScreen extends Component {
             user: '',
             password: '',
             dataSource: dataSource.people,
+            isPwdVisible: false,
+            hidden: true,
+        };
+        this.onLongPress = this.onLongPress.bind(this);
+    }
+
+
+    componentWillReceiveProps(nextProps){
+        console.log("nextprops :: ", nextProps);
+        let isSuccess = nextProps.loginInfo.loginResponse;
+        if(isSuccess === 'LOGIN_SUCCESS'){
+            this.props.navigation.navigate('Home');
+        }else{
+            alert("The Username or password might be wrong,");
         }
+    }
+
+    onLongPress () {
+        this.setState({
+            isPwdVisible: true,
+        });
     }
 
     changePassword(password) {
@@ -58,24 +83,27 @@ class LoginScreen extends Component {
     }
 
     onChangeLoginPassword(password) {
-        this.setState({password})
+        this.setState({password});
         if (this.state.password.length >= 0) {
             this.setState({
                 isErrorInput: false,
+                visibleIcon: true,
+            })
+        }else{
+            this.setState({
+                visibleIcon: true,
             })
         }
     }
 
     signUpButton() {
+        Keyboard.dismiss();
         // let activityIndicator = new Indicator();
         // activityIndicator.startActivity();
-
         this.props.navigation.navigate('Home');
-
         // setTimeout(() => {this.props.navigation.navigate('Home');}, 1000);
-
         this.setState({
-            errorText: 'This feature is not added.',
+            // errorText: 'This feature is not added.',
             isErrorInput: !this.state.isErrorInput,
         });
         // activityIndicator.stopActivity();
@@ -104,31 +132,16 @@ class LoginScreen extends Component {
     }
 
     loginButton(userCredential) {
+        Keyboard.dismiss();
         console.log(" loginButton : ", userCredential);
-        let userInput = userCredential.user;
-        let userPwd = userCredential.password;
         if (this.validation(userCredential)) {
-            let userDetails = this.state.dataSource[0].results;
-            const isValidUser = userDetails.filter((obj) => {
-                if (obj.name === userInput && obj.birth_year === userPwd) {
-                    console.log("its available");
-                    this.props.navigation.navigate('Home');
-                    return true;
-                } else {
-                    this.setState({
-                        isErrorInput: true,
-                        errorText: 'The User or Password does not available in our account, please check again'
-                    });
-                    return false;
-                }
-            });
-
+            this.props.login(userCredential);
         }
+
     }
 
     render() {
         const {navigate} = this.props.navigation;
-        // console.log("dataSource :: " , JSON.stringify(dataSource));
         return (
             <View style={[globalStyle.container, styles.container]}>
                 <StatusBar
@@ -170,12 +183,17 @@ class LoginScreen extends Component {
                                 underlineColorAndroid="transparent"
                                 returnKeyType="go"
                                 blurOnSubmit={false}
-                                secureTextEntry={true}
+                                secureTextEntry={this.state.hidden}
                                 value={this.state.password}
+                                onSubmitEditing={event => this.onSubmitEdit(event)}
                                 onChangeText={password => this.onChangeLoginPassword(password)}
                             />
                             <View style={globalStyle.rightIcon}>
-                                {this.state.changePassword ? visibleIcon : null}
+                                <TouchableOpacity
+                                    onPress={ () => this.setState({ hidden: !this.state.hidden })}
+                                >
+                                    {this.state.visibleIcon ? visibleIcon : null}
+                                </TouchableOpacity>
                             </View>
                         </View>
                         <View style={globalStyle.errorTextContainer}>
@@ -184,11 +202,11 @@ class LoginScreen extends Component {
                         </View>
                         <View style={styles.loginButtonContainer}>
                             <TouchableOpacity
+                                style={[globalStyle.mainButton, styles.mainButton]}
                                 onPress={(user, password) => this.loginButton({
                                     user: this.state.user,
                                     password: this.state.password
                                 })}
-                                style={[globalStyle.mainButton, styles.mainButton]}
                             >
                                 <Text style={globalStyle.buttonText}>
                                     Login
@@ -215,7 +233,7 @@ const styles = StyleSheet.create({
     loginContainer: {
         flex: 1,
         width: deviceWidth,
-        height: deviceHeight,
+        // height: deviceHeight,
         justifyContent: 'center',
         paddingLeft: 10,
         paddingRight: 10,
@@ -234,12 +252,23 @@ const styles = StyleSheet.create({
     },
     loginButtonContainer: {
         flexDirection: 'row',
-
+        marginBottom: 90,
     },
     mainButton: {
         width: '40%',
         marginLeft: 5,
     }
 });
+function mapStateToProps(state) {
+    return {
+        loginInfo: state.loginInfo,
+    };
+}
 
-export default LoginScreen;
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators(ActionCreators, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
+
+

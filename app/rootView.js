@@ -1,30 +1,22 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-import Login from './containers/login';
-import Home from './containers/home';
-import SearchPlanets from './components/searchPlanets';
+import {createStore, combineReducers, compose, applyMiddleware} from 'redux';
+import { Provider } from 'react-redux';
+import reducer from './redux/reducer';
+import thunkMiddleware from 'redux-thunk';
+import { Navigation } from './router';
 
-import { StackNavigator } from 'react-navigation';
+const createStoreWithMiddleware = applyMiddleware(thunkMiddleware)(createStore);
+const store = createStoreWithMiddleware(reducer);
 
-const Navigation = StackNavigator({
-    Login: {
-        screen: Login,
-        navigationOptions: {
-            header: null,
-        },
-    },
-    Home: {
-        screen: Home,
-        /*navigationOptions: {
-            header: null,
-        },*/
-    },
-    SearchPlanets: {
-        screen: SearchPlanets,
-        /*navigationOptions: {
-            header: null,
-        },*/
-    },
-});
+export default class rootView extends  Component{
+    render(){
+        return(
+            <Provider store={store}>
+                <Navigation />
+            </ Provider>
 
-export default Navigation;
+        )
+    }
+}
+

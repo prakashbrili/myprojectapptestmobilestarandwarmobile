@@ -65,7 +65,7 @@ const dataSource = {
                     "url": "https://swapi.co/api/people/2/"
                 },
                 {
-                    "name": "R2-D2",
+                    "name": "R2",
                     "height": "96",
                     "mass": "32",
                     "hair_color": "n/a",

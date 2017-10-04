@@ -49,7 +49,7 @@ const globalSize = {
 
 const globalStyle = {
     container:{
-      flex: 1,
+        flex: 1,
         flexDirection: 'column',
     },
     productTitle:{
